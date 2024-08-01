@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const animals = [
   { name: 'Cow', image: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Cow_female_black_white.jpg' },
@@ -14,52 +15,85 @@ const animals = [
   { name: 'Duck', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Bucephala-albeola-010.jpg/640px-Bucephala-albeola-010.jpg' },
 ];
 
-const Index = () => {
-  const [score, setScore] = useState(0);
-  const [currentAnimals, setCurrentAnimals] = useState([]);
-  const [correctAnimal, setCorrectAnimal] = useState(null);
+const colors = [
+  { name: 'Red', hex: '#FF0000' },
+  { name: 'Blue', hex: '#0000FF' },
+  { name: 'Green', hex: '#00FF00' },
+  { name: 'Yellow', hex: '#FFFF00' },
+  { name: 'Purple', hex: '#800080' },
+  { name: 'Orange', hex: '#FFA500' },
+  { name: 'Pink', hex: '#FFC0CB' },
+  { name: 'Brown', hex: '#A52A2A' },
+];
 
-  const selectRandomAnimals = () => {
-    const shuffled = [...animals].sort(() => 0.5 - Math.random());
+const Index = () => {
+  const [gameMode, setGameMode] = useState('animal');
+  const [score, setScore] = useState(0);
+  const [currentItems, setCurrentItems] = useState([]);
+  const [correctItem, setCorrectItem] = useState(null);
+
+  const selectRandomItems = () => {
+    const items = gameMode === 'animal' ? animals : colors;
+    const shuffled = [...items].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, 4);
   };
 
   const startNewRound = () => {
-    const newAnimals = selectRandomAnimals();
-    setCurrentAnimals(newAnimals);
-    setCorrectAnimal(newAnimals[Math.floor(Math.random() * newAnimals.length)]);
+    const newItems = selectRandomItems();
+    setCurrentItems(newItems);
+    setCorrectItem(newItems[Math.floor(Math.random() * newItems.length)]);
   };
 
   useEffect(() => {
     startNewRound();
-  }, []);
+  }, [gameMode]);
 
-  const handleAnimalClick = (animal) => {
-    if (animal.name === correctAnimal.name) {
+  const handleItemClick = (item) => {
+    if (item.name === correctItem.name) {
       setScore(score + 1);
     }
     startNewRound();
   };
 
+  const handleGameModeChange = (value) => {
+    setGameMode(value);
+    setScore(0);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-6">Animal World</h1>
+      <h1 className="text-3xl font-bold text-center mb-6">Game World</h1>
       
       <Tabs defaultValue="game" className="mb-8">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="game">Animal Game</TabsTrigger>
-          <TabsTrigger value="info">Animal Info</TabsTrigger>
+          <TabsTrigger value="game">Game</TabsTrigger>
+          <TabsTrigger value="info">Info</TabsTrigger>
         </TabsList>
         <TabsContent value="game">
           <div className="py-4">
-            <p className="text-xl text-center mb-4">Score: {score}</p>
-            <p className="text-2xl text-center mb-6">Select the {correctAnimal?.name}</p>
+            <div className="flex justify-between items-center mb-4">
+              <p className="text-xl">Score: {score}</p>
+              <Select onValueChange={handleGameModeChange} defaultValue={gameMode}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select game mode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="animal">Animal Game</SelectItem>
+                  <SelectItem value="color">Color Game</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <p className="text-2xl text-center mb-6">Select the {correctItem?.name}</p>
             <div className="grid grid-cols-2 gap-4 mb-8">
-              {currentAnimals.map((animal, index) => (
-                <Card key={index} className="p-4 cursor-pointer hover:bg-gray-100" onClick={() => handleAnimalClick(animal)}>
-                  <div className="relative w-full h-40">
-                    <img src={animal.image} alt={animal.name} className="mx-auto object-cover w-full h-full rounded-md" />
-                  </div>
+              {currentItems.map((item, index) => (
+                <Card key={index} className="p-4 cursor-pointer hover:bg-gray-100" onClick={() => handleItemClick(item)}>
+                  {gameMode === 'animal' ? (
+                    <div className="relative w-full h-40">
+                      <img src={item.image} alt={item.name} className="mx-auto object-cover w-full h-full rounded-md" />
+                    </div>
+                  ) : (
+                    <div className="w-full h-40 rounded-md" style={{ backgroundColor: item.hex }}></div>
+                  )}
                 </Card>
               ))}
             </div>
@@ -95,8 +129,8 @@ const Index = () => {
   );
 };
 
-const getAnimalInfo = (animalName) => {
-  const info = {
+const getItemInfo = (itemName) => {
+  const animalInfo = {
     Cow: "Cows are domesticated cattle known for producing milk and meat. They are herbivores and have a complex digestive system with four stomachs.",
     Dog: "Dogs are domesticated descendants of wolves and are often referred to as 'man's best friend'. They come in various breeds and are known for their loyalty and companionship.",
     Cat: "Cats are small carnivorous mammals that have been popular household pets for thousands of years. They are known for their independent nature and hunting skills.",
@@ -106,7 +140,19 @@ const getAnimalInfo = (animalName) => {
     Chicken: "Chickens are domesticated birds raised for their eggs and meat. They are omnivores and are the most common type of poultry in the world.",
     Duck: "Ducks are waterfowl birds known for their waterproof feathers and webbed feet. They can be found in both fresh and saltwater environments and are popular in many cuisines.",
   };
-  return info[animalName] || "Information not available.";
+
+  const colorInfo = {
+    Red: "Red is a primary color associated with energy, passion, and excitement. It's often used to grab attention and create a sense of urgency.",
+    Blue: "Blue is a primary color that symbolizes trust, calmness, and stability. It's widely used in corporate designs and is known to have a soothing effect.",
+    Green: "Green is a secondary color that represents nature, growth, and harmony. It's often associated with environmental causes and health.",
+    Yellow: "Yellow is a primary color that signifies happiness, optimism, and creativity. It's attention-grabbing and is often used in warning signs.",
+    Purple: "Purple is a secondary color that symbolizes royalty, luxury, and creativity. It's often associated with wisdom and spirituality.",
+    Orange: "Orange is a secondary color that combines the energy of red and the happiness of yellow. It's associated with enthusiasm, adventure, and confidence.",
+    Pink: "Pink is a tint of red that is often associated with femininity, love, and compassion. It can have a calming effect and is used to represent caring and nurturing.",
+    Brown: "Brown is a composite color that represents earthiness, stability, and reliability. It's often associated with nature and can create a sense of warmth and comfort.",
+  };
+
+  return animalInfo[itemName] || colorInfo[itemName] || "Information not available.";
 };
 
 export default Index;
