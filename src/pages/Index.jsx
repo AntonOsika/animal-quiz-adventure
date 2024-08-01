@@ -118,8 +118,9 @@ const Index = () => {
                       <img src={animal.image} alt={animal.name} className="mx-auto object-cover w-full h-full rounded-md" />
                     </div>
                     <p className="text-gray-700 md:w-1/2 text-lg">
-                    {getItemInfo(animal.name)}
-                  </p>
+                      {getItemInfo(animal.name)}
+                    </p>
+                  </div>
                 </Card>
               </TabsContent>
             ))}
