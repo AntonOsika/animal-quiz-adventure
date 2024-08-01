@@ -61,20 +61,20 @@ const Index = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-6">Game World</h1>
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <h1 className="text-4xl md:text-5xl font-bold text-center mb-8">Game World</h1>
       
-      <Tabs defaultValue="game" className="mb-8">
+      <Tabs defaultValue="game" className="mb-8 space-y-4">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="game">Game</TabsTrigger>
           <TabsTrigger value="info">Info</TabsTrigger>
         </TabsList>
         <TabsContent value="game">
-          <div className="py-4">
-            <div className="flex justify-between items-center mb-4">
-              <p className="text-xl">Score: {score}</p>
+          <div className="py-4 space-y-6">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-4 space-y-4 md:space-y-0">
+              <p className="text-2xl font-semibold">Score: {score}</p>
               <Select onValueChange={handleGameModeChange} defaultValue={gameMode}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select game mode" />
                 </SelectTrigger>
                 <SelectContent>
@@ -83,40 +83,41 @@ const Index = () => {
                 </SelectContent>
               </Select>
             </div>
-            <p className="text-2xl text-center mb-6">Select the {correctItem?.name}</p>
-            <div className="grid grid-cols-2 gap-4 mb-8">
+            <p className="text-3xl text-center mb-6">Select the {correctItem?.name}</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
               {currentItems.map((item, index) => (
-                <Card key={index} className="p-4 cursor-pointer hover:bg-gray-100" onClick={() => handleItemClick(item)}>
+                <Card key={index} className="p-4 cursor-pointer hover:bg-gray-100 transition-colors duration-200" onClick={() => handleItemClick(item)}>
                   {gameMode === 'animal' ? (
-                    <div className="relative w-full h-40">
+                    <div className="relative w-full h-48 md:h-60">
                       <img src={item.image} alt={item.name} className="mx-auto object-cover w-full h-full rounded-md" />
                     </div>
                   ) : (
-                    <div className="w-full h-40 rounded-md" style={{ backgroundColor: item.hex }}></div>
+                    <div className="w-full h-48 md:h-60 rounded-md" style={{ backgroundColor: item.hex }}></div>
                   )}
                 </Card>
               ))}
             </div>
             <div className="text-center">
-              <Button onClick={startNewRound}>Next Round</Button>
+              <Button onClick={startNewRound} size="lg" className="text-lg px-8 py-2">Next Round</Button>
             </div>
           </div>
         </TabsContent>
         <TabsContent value="info">
-          <Tabs defaultValue="cow">
-            <TabsList className="mb-4">
+          <Tabs defaultValue="cow" className="space-y-6">
+            <TabsList className="mb-4 flex flex-wrap justify-center gap-2">
               {animals.map((animal) => (
-                <TabsTrigger key={animal.name} value={animal.name.toLowerCase()}>{animal.name}</TabsTrigger>
+                <TabsTrigger key={animal.name} value={animal.name.toLowerCase()} className="px-4 py-2">{animal.name}</TabsTrigger>
               ))}
             </TabsList>
             {animals.map((animal) => (
               <TabsContent key={animal.name} value={animal.name.toLowerCase()}>
-                <Card className="p-6">
-                  <h2 className="text-2xl font-bold mb-4">{animal.name}</h2>
-                  <div className="relative w-full h-64 mb-4">
-                    <img src={animal.image} alt={animal.name} className="mx-auto object-cover w-full h-full rounded-md" />
-                  </div>
-                  <p className="text-gray-700">
+                <Card className="p-6 md:p-8">
+                  <h2 className="text-3xl font-bold mb-6">{animal.name}</h2>
+                  <div className="flex flex-col md:flex-row gap-6">
+                    <div className="relative w-full md:w-1/2 h-64 md:h-auto">
+                      <img src={animal.image} alt={animal.name} className="mx-auto object-cover w-full h-full rounded-md" />
+                    </div>
+                    <p className="text-gray-700 md:w-1/2 text-lg">
                     {getItemInfo(animal.name)}
                   </p>
                 </Card>
