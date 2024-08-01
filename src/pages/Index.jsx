@@ -48,10 +48,9 @@ const Index = () => {
       <div className="grid grid-cols-2 gap-4 mb-8">
         {currentAnimals.map((animal, index) => (
           <Card key={index} className="p-4 cursor-pointer hover:bg-gray-100" onClick={() => handleAnimalClick(animal)}>
-            <div className="relative w-full h-40 mb-2">
+            <div className="relative w-full h-40">
               <img src={animal.image} alt={animal.name} className="mx-auto object-cover w-full h-full rounded-md" />
             </div>
-            <p className="text-center font-semibold">{animal.name}</p>
           </Card>
         ))}
       </div>
